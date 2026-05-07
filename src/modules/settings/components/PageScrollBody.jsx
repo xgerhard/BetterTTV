@@ -8,10 +8,7 @@ export const PageScrollContext = React.createContext(null);
 export function PageScrollBody({children, className, ...props}) {
   const ref = useContext(PageScrollContext);
   return (
-    <div
-      ref={ref}
-      className={classNames(styles.pageScrollBody, scrollbarStyles.scroll, className)}
-      {...props}>
+    <div ref={ref} className={classNames(styles.pageScrollBody, scrollbarStyles.scroll, className)} {...props}>
       {children}
     </div>
   );

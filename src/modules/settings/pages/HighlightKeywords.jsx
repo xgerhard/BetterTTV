@@ -9,11 +9,7 @@ function HighlightKeywords() {
 
   return (
     <PageScrollBody>
-      <SettingKeywords
-        value={value}
-        setValue={setValue}
-        colorColumn={{defaultValue: DEFAULT_HIGHLIGHT_COLOR}}
-      />
+      <SettingKeywords value={value} setValue={setValue} colorColumn={{defaultValue: DEFAULT_HIGHLIGHT_COLOR}} />
     </PageScrollBody>
   );
 }

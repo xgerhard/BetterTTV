@@ -209,30 +209,30 @@ function UserSettings() {
 
   return (
     <PageScrollBody>
-        <Promotion />
-        <SettingGroup name={formatMessage({defaultMessage: 'Extension'})}>
-          <CloudBackupSetting />
-          <BackupSetting
-            description={formatMessage({defaultMessage: 'Download a copy of your settings to a JSON file.'})}
-            disabled={resetting}
-          />
-          <ImportSetting
-            description={formatMessage({defaultMessage: 'Restore your settings from a backup file.'})}
-            disabled={resetting}
-            importing={importing}
-            setImporting={setImporting}
-          />
-          <ResetSetting
-            description={formatMessage({defaultMessage: 'Clear all settings and restore defaults.'})}
-            disabled={importing}
-            resetting={resetting}
-            setResetting={setResetting}
-          />
-        </SettingGroup>
-        <SettingGroup name={formatMessage({defaultMessage: 'Account'})}>
-          <SignInButton />
-        </SettingGroup>
-        <Footer />
+      <Promotion />
+      <SettingGroup name={formatMessage({defaultMessage: 'Extension'})}>
+        <CloudBackupSetting />
+        <BackupSetting
+          description={formatMessage({defaultMessage: 'Download a copy of your settings to a JSON file.'})}
+          disabled={resetting}
+        />
+        <ImportSetting
+          description={formatMessage({defaultMessage: 'Restore your settings from a backup file.'})}
+          disabled={resetting}
+          importing={importing}
+          setImporting={setImporting}
+        />
+        <ResetSetting
+          description={formatMessage({defaultMessage: 'Clear all settings and restore defaults.'})}
+          disabled={importing}
+          resetting={resetting}
+          setResetting={setResetting}
+        />
+      </SettingGroup>
+      <SettingGroup name={formatMessage({defaultMessage: 'Account'})}>
+        <SignInButton />
+      </SettingGroup>
+      <Footer />
     </PageScrollBody>
   );
 }

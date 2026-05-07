@@ -4,7 +4,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--vertical-padding) calc(var(--horizontal-padding) - 10px) var(--vertical-padding) var(--horizontal-padding);
+  padding: var(--vertical-padding) calc(var(--horizontal-padding) - 10px) var(--vertical-padding)
+    var(--horizontal-padding);
   background-color: var(--mantine-color-body-secondary);
   border-bottom: 1px solid var(--mantine-color-default-border);
   z-index: 10;
