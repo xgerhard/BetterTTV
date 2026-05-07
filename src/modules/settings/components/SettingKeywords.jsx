@@ -263,7 +263,7 @@ function SettingKeywords({title, value, setValue, colorColumn = null}) {
     <Panel
       title={title}
       rightContent={
-        <Button size="lg" onClick={newEntryHandler}>
+        <Button size="lg" className={styles.newEntryButton} onClick={newEntryHandler}>
           {formatMessage({defaultMessage: 'New Entry'})}
         </Button>
       }

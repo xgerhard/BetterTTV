@@ -91,8 +91,9 @@ const EmoteList = React.forwardRef(
     ref
   ) => {
     const {rows, totalCols} = data;
-    const {ref: listViewportRef, height, width} = useElementSize();
-    const mergedRef = useMergedRef(ref, listViewportRef);
+    const listViewportRef = useRef(null);
+    const {ref: listSizeRef, height, width} = useElementSize();
+    const mergedRef = useMergedRef(ref, listSizeRef, listViewportRef);
     const rowColumnCounts = useMemo(() => getRowColumnCounts(rows), [rows]);
     const handleMouseMove = useCallback(() => setNavigationMode(NavigationModeTypes.MOUSE), [setNavigationMode]);
     const navigationModeRef = useRef(navigationMode);
@@ -115,7 +116,10 @@ const EmoteList = React.forwardRef(
       }
 
       const clientWidth = currentRef.clientWidth;
-      emoteMenuViewStore.updateTotalColumns(clientWidth);
+      const frameId = requestAnimationFrame(() => {
+        emoteMenuViewStore.updateTotalColumns(clientWidth);
+      });
+      return () => cancelAnimationFrame(frameId);
     }, [listViewportRef, width]);
 
     const updateScrollPositionByCoords = useCallback(

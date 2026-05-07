@@ -3,6 +3,10 @@
   overflow: hidden;
 }
 
+.newEntryButton {
+  margin-left: auto;
+}
+
 .table {
   font-size: var(--mantine-font-size-md);
 

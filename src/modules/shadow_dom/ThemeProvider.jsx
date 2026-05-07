@@ -7,7 +7,7 @@ import {
   Checkbox,
   createTheme,
   defaultVariantColorsResolver,
-  defaultCssVariablesResolver,
+  v8CssVariablesResolver,
   DEFAULT_THEME,
   Input,
   Kbd,
@@ -169,7 +169,7 @@ export const mantineVariablesResolver = (theme, primaryColor) => {
     theme.primaryColor = primaryColor;
   }
 
-  const {variables: defaultVariables, dark: defaultDark, light: defaultLight} = defaultCssVariablesResolver(theme);
+  const {variables: defaultVariables, dark: defaultDark, light: defaultLight} = v8CssVariablesResolver(theme);
   const {variables, dark, light} = resolver(theme);
 
   return {

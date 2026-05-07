@@ -9,19 +9,15 @@
 
 .navigationIconButton,
 .logo {
-  width: 76px;
-  height: 76px;
+  width: 56px;
+  height: 56px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.navigationIconButton {
-  height: 56px;
-}
-
 .userSettingsButton {
-  height: 76px;
+  height: 56px;
   border: 1px solid var(--button-hover);
 }
 

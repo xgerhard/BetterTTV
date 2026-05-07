@@ -1,6 +1,6 @@
 .input {
   font-size: var(--mantine-font-size-lg);
-  height: 36px;
+  height: 28px;
 }
 
 .root {
@@ -11,27 +11,31 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px; /* 8px - 2px border */
-  padding-right: 6px;
+  gap: 8px;
+  padding-right: 8px;
   background-color: var(--mantine-color-body-secondary);
 }
 
 .closeButton {
-  background-color: var(--mantine-color-gray-light);
-  border-radius: var(--mantine-radius-lg);
+  --cb-icon-size: 90%;
+  background-color: transparent;
+  border: none;
+  color: var(--mantine-color-dimmed);
 
-  min-width: 32px;
-  min-height: 32px;
-  margin: 2px;
+  min-width: 28px;
+  min-height: 28px;
 
   svg {
-    max-width: 24px;
-    max-height: 24px;
+    width: 26px;
+    height: 26px;
+    max-width: 26px;
+    max-height: 26px;
   }
 }
 
 .closeButton:hover {
-  background-color: var(--mantine-color-gray-light-hover);
+  background-color: transparent;
+  color: var(--mantine-color-text);
 }
 
 .logoButton {

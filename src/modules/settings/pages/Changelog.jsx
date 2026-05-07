@@ -4,12 +4,12 @@ import {EXT_VER} from '../../../constants.js';
 import formatMessage from '../../../i18n/index.js';
 import api from '../../../utils/api.js';
 import debug from '../../../utils/debug.js';
-import PageHeader from '../components/PageHeader.jsx';
 import Panel from '../components/Panel.jsx';
 import semver from 'semver';
 import PageLoader from '../components/PageLoader.jsx';
 import {Anchor, Text, Title} from '@mantine/core';
 import styles from './Changelog.module.css';
+import PageScrollBody from '../components/PageScrollBody.jsx';
 
 function IssueLink({issueNumber}) {
   return (
@@ -74,7 +74,7 @@ function ChangelogEntryList({changelogEntries: rawChangelogEntries}) {
   ));
 }
 
-function Changelog({onClose}) {
+function Changelog() {
   const [{loading, changelogEntries}, setRequestState] = useState({
     loading: true,
     changelogEntries: null,
@@ -91,8 +91,7 @@ function Changelog({onClose}) {
   }, []);
 
   return (
-    <React.Fragment>
-      <PageHeader leftContent={formatMessage({defaultMessage: 'Changelog'})} onClose={onClose} />
+    <PageScrollBody>
       {loading ? <PageLoader /> : null}
       {!loading && changelogEntries == null ? (
         <Text>{formatMessage({defaultMessage: 'Failed to load Changelog.'})}</Text>
@@ -105,7 +104,7 @@ function Changelog({onClose}) {
           </Text>
         </Panel>
       ) : null}
-    </React.Fragment>
+    </PageScrollBody>
   );
 }
 

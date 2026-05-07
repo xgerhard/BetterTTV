@@ -6,10 +6,10 @@ import {SETTINGS_STORAGE_KEY} from '../../../settings.js';
 import storage from '../../../storage.js';
 import {loadLegacySettings} from '../../../utils/legacy-settings.js';
 import Footer from '../components/Footer.jsx';
+import PageScrollBody from '../components/PageScrollBody.jsx';
 import SettingGroup from '../components/SettingGroup.jsx';
 import SettingWrapper from '../components/SettingWrapper.jsx';
 import {Button} from '@mantine/core';
-import PageHeader from '../components/PageHeader.jsx';
 import useAuthStore, {getCredentials, setCredentials} from '../../../stores/auth.js';
 import {revokeAccessToken} from '../../../utils/oauth.js';
 import {executeOAuth2SignInAndSetCredentials} from '../../../utils/auth.js';
@@ -203,38 +203,37 @@ function SignInButton() {
   );
 }
 
-function UserSettings({onClose}) {
+function UserSettings() {
   const [importing, setImporting] = useState(false);
   const [resetting, setResetting] = useState(false);
 
   return (
-    <React.Fragment>
-      <PageHeader leftContent={formatMessage({defaultMessage: 'User Settings'})} onClose={onClose} />
-      <Promotion />
-      <SettingGroup name={formatMessage({defaultMessage: 'Extension'})}>
-        <CloudBackupSetting />
-        <BackupSetting
-          description={formatMessage({defaultMessage: 'Download a copy of your settings to a JSON file.'})}
-          disabled={resetting}
-        />
-        <ImportSetting
-          description={formatMessage({defaultMessage: 'Restore your settings from a backup file.'})}
-          disabled={resetting}
-          importing={importing}
-          setImporting={setImporting}
-        />
-        <ResetSetting
-          description={formatMessage({defaultMessage: 'Clear all settings and restore defaults.'})}
-          disabled={importing}
-          resetting={resetting}
-          setResetting={setResetting}
-        />
-      </SettingGroup>
-      <SettingGroup name={formatMessage({defaultMessage: 'Account'})}>
-        <SignInButton />
-      </SettingGroup>
-      <Footer />
-    </React.Fragment>
+    <PageScrollBody>
+        <Promotion />
+        <SettingGroup name={formatMessage({defaultMessage: 'Extension'})}>
+          <CloudBackupSetting />
+          <BackupSetting
+            description={formatMessage({defaultMessage: 'Download a copy of your settings to a JSON file.'})}
+            disabled={resetting}
+          />
+          <ImportSetting
+            description={formatMessage({defaultMessage: 'Restore your settings from a backup file.'})}
+            disabled={resetting}
+            importing={importing}
+            setImporting={setImporting}
+          />
+          <ResetSetting
+            description={formatMessage({defaultMessage: 'Clear all settings and restore defaults.'})}
+            disabled={importing}
+            resetting={resetting}
+            setResetting={setResetting}
+          />
+        </SettingGroup>
+        <SettingGroup name={formatMessage({defaultMessage: 'Account'})}>
+          <SignInButton />
+        </SettingGroup>
+        <Footer />
+    </PageScrollBody>
   );
 }
 

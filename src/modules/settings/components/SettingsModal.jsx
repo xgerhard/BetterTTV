@@ -1,32 +1,36 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {PageDecendants, PageTypes} from '../../../constants.js';
 import UserSettings from '../pages/UserSettings.jsx';
 import Changelog from '../pages/Changelog.jsx';
-import Settings, {PAGE_HEADER_HEIGHT} from '../pages/Settings.jsx';
+import Settings from '../pages/Settings.jsx';
+import settingsStyles from '../pages/Settings.module.css';
 import styles from './SettingsModal.module.css';
-import {Modal} from '@mantine/core';
-import {useDisclosure, useMergedRef, useViewportSize} from '@mantine/hooks';
+import {ActionIcon, Modal, TextInput, Title} from '@mantine/core';
+import {useDisclosure, useFocusTrap, useViewportSize} from '@mantine/hooks';
+import {PageScrollContext} from './PageScrollBody.jsx';
 import HighlightKeywords from '../pages/HighlightKeywords.jsx';
 import SideNavigation from './SideNavigation.jsx';
+import PageHeader from './PageHeader.jsx';
 import {PageContext} from '../contexts/PageContext.jsx';
 import BlacklistKeywords from '../pages/BlacklistKeywords.jsx';
-import classNames from 'classnames';
-import scrollbarStyles from '../../../common/styles/Scrollbar.module.css';
 import {AnimatePresence, motion, usePresenceData} from 'framer-motion';
+import {faArrowLeft} from '@fortawesome/free-solid-svg-icons';
+import Icon from '../../../common/components/Icon.jsx';
+import formatMessage from '../../../i18n/index.js';
 
-function Page({page, ...restProps}) {
+function Page({page, search, handleSettingRefCallback}) {
   switch (page) {
     case PageTypes.CHANGELOG:
-      return <Changelog {...restProps} />;
+      return <Changelog />;
     case PageTypes.HIGHLIGHT_KEYWORDS:
-      return <HighlightKeywords {...restProps} />;
+      return <HighlightKeywords />;
     case PageTypes.BLACKLIST_KEYWORDS:
-      return <BlacklistKeywords {...restProps} />;
+      return <BlacklistKeywords />;
     case PageTypes.SETTINGS:
-      return <Settings {...restProps} />;
+      return <Settings search={search} handleSettingRefCallback={handleSettingRefCallback} />;
     case PageTypes.USER_SETTINGS:
     default:
-      return <UserSettings {...restProps} />;
+      return <UserSettings />;
   }
 }
 
@@ -56,24 +60,39 @@ const pageMotionVariants = {
   },
 };
 
-function PageTransition({children, className, computeDefaultScrollTop, containerRef, pendingScrollToSettingPanelId}) {
-  const currentRef = useRef(null);
-  const mergedRef = useMergedRef(containerRef, currentRef);
+function PageTransition({children, className, computeDefaultScrollTop, scrollRef, pendingScrollToSettingPanelId}) {
   const direction = usePresenceData();
   const {initial, exit} = pageMotionVariants[direction];
 
   useEffect(() => {
-    if (currentRef.current == null) {
+    if (scrollRef.current == null) {
       return;
     }
 
-    currentRef.current.scrollTop = computeDefaultScrollTop();
+    scrollRef.current.scrollTop = computeDefaultScrollTop();
     pendingScrollToSettingPanelId.current = null;
   }, []);
 
   return (
+    <PageScrollContext.Provider value={scrollRef}>
+      <motion.div
+        variants={pageMotionVariants}
+        initial={initial}
+        exit={exit}
+        animate={{opacity: 1, filter: 'blur(0px)', x: 0, y: 0}}
+        className={className}>
+        {children}
+      </motion.div>
+    </PageScrollContext.Provider>
+  );
+}
+
+function HeaderTransition({children, className}) {
+  const direction = usePresenceData();
+  const {initial, exit} = pageMotionVariants[direction];
+
+  return (
     <motion.div
-      ref={mergedRef}
       variants={pageMotionVariants}
       initial={initial}
       exit={exit}
@@ -90,18 +109,13 @@ function SettingsModal({setHandleOpen}) {
   const [isInteractive, setIsInteractive] = useState(false);
   const [open, modalHandlers] = useDisclosure(false);
   const [sidenavOpen, setSidenavOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const settingRefs = useRef({});
   const pendingScrollToSettingPanelId = useRef(null);
   const [pageTransitionDirection, setPageTransitionDirection] = useState(PageTransitionDirection.RIGHT);
-  const pageData = useRef({});
   const pageContentRef = useRef(null);
   const lastParentData = useRef({scrollTop: 0, page: null});
-
-  function createUpdatePageDataCallback(pageType) {
-    return function updatePageData(value) {
-      pageData.current[pageType] = {...(pageData.current[pageType] ?? {}), ...value};
-    };
-  }
+  const inputRef = useFocusTrap(isInteractive && page === PageTypes.SETTINGS);
 
   function handlePageChange(newPage) {
     if (lastParentData.current.page !== newPage) {
@@ -171,6 +185,58 @@ function SettingsModal({setHandleOpen}) {
     setIsInteractive(false);
   }, [setIsInteractive]);
 
+  const handleSearchChange = useCallback(({target: {value}}) => {
+    setSearch(value);
+  }, []);
+
+  const handleBackToSettings = useCallback(() => {
+    handlePageChange(PageTypes.SETTINGS);
+  }, [handlePageChange]);
+
+  const leftContent = useMemo(() => {
+    switch (page) {
+      case PageTypes.SETTINGS:
+        return (
+          <TextInput
+            size="lg"
+            ref={inputRef}
+            value={search}
+            placeholder={formatMessage({defaultMessage: 'Search Settings...'})}
+            onChange={handleSearchChange}
+            classNames={{input: settingsStyles.searchInput, root: settingsStyles.searchInputRoot}}
+            radius="lg"
+          />
+        );
+      case PageTypes.USER_SETTINGS:
+        return <Title order={1}>{formatMessage({defaultMessage: 'User Settings'})}</Title>;
+      case PageTypes.CHANGELOG:
+        return <Title order={1}>{formatMessage({defaultMessage: 'Changelog'})}</Title>;
+      case PageTypes.HIGHLIGHT_KEYWORDS:
+      case PageTypes.BLACKLIST_KEYWORDS:
+        return (
+          <div className={styles.backHeader}>
+            <ActionIcon
+              radius="lg"
+              size="lg"
+              variant="subtle"
+              color="gray"
+              className={styles.backIcon}
+              onClick={handleBackToSettings}
+              aria-label={formatMessage({defaultMessage: 'Back to Settings'})}>
+              <Icon className={styles.backButtonIcon} icon={faArrowLeft} />
+            </ActionIcon>
+            <Title order={1}>
+              {page === PageTypes.HIGHLIGHT_KEYWORDS
+                ? formatMessage({defaultMessage: 'Highlight Keywords'})
+                : formatMessage({defaultMessage: 'Blacklist Keywords'})}
+            </Title>
+          </div>
+        );
+      default:
+        return null;
+    }
+  }, [page, search, inputRef, handleSearchChange, handleBackToSettings]);
+
   const computeDefaultScrollTop = useCallback(() => {
     if (
       page === PageTypes.SETTINGS &&
@@ -178,7 +244,7 @@ function SettingsModal({setHandleOpen}) {
       settingRefs.current[pendingScrollToSettingPanelId.current] != null
     ) {
       const setting = settingRefs.current[pendingScrollToSettingPanelId.current];
-      return setting.offsetTop - PAGE_HEADER_HEIGHT;
+      return setting.offsetTop;
     }
 
     if (lastParentData.current.page !== page) {
@@ -213,23 +279,28 @@ function SettingsModal({setHandleOpen}) {
       <PageContext.Provider
         value={{page, setPage: handlePageChange, sidenavOpen, setSidenavOpen, handleGotoSettingPanel}}>
         <SideNavigation open={sidenavOpen} setOpen={setSidenavOpen} />
-        <AnimatePresence initial={false} custom={pageTransitionDirection} mode="wait">
-          <PageTransition
-            containerRef={pageContentRef}
-            key={page}
-            pendingScrollToSettingPanelId={pendingScrollToSettingPanelId}
-            className={classNames(styles.pageContent, scrollbarStyles.scroll)}
-            computeDefaultScrollTop={computeDefaultScrollTop}>
-            <Page
-              page={page}
-              onClose={modalHandlers.close}
-              isInteractive={isInteractive}
-              handleSettingRefCallback={handleSettingRefCallback}
-              pageData={pageData.current[page]}
-              setPageData={createUpdatePageDataCallback(page)}
-            />
-          </PageTransition>
-        </AnimatePresence>
+        <div className={styles.pageColumn}>
+          <PageHeader
+            leftContent={
+              <AnimatePresence initial={false} custom={pageTransitionDirection} mode="wait">
+                <HeaderTransition key={page} className={styles.headerLeftContent}>
+                  {leftContent}
+                </HeaderTransition>
+              </AnimatePresence>
+            }
+            onClose={modalHandlers.close}
+          />
+          <AnimatePresence initial={false} custom={pageTransitionDirection} mode="wait">
+            <PageTransition
+              scrollRef={pageContentRef}
+              key={page}
+              pendingScrollToSettingPanelId={pendingScrollToSettingPanelId}
+              className={styles.pageContent}
+              computeDefaultScrollTop={computeDefaultScrollTop}>
+              <Page page={page} search={search} handleSettingRefCallback={handleSettingRefCallback} />
+            </PageTransition>
+          </AnimatePresence>
+        </div>
       </PageContext.Provider>
     </Modal>
   );

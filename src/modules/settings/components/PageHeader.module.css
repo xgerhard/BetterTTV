@@ -1,13 +1,12 @@
 .header {
-  --vertical-padding: 20px;
+  --vertical-padding: 10px;
   --horizontal-padding: 20px;
-  position: sticky;
-  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--vertical-padding) var(--horizontal-padding);
-  background: linear-gradient(to top, transparent, var(--mantine-color-body-secondary) var(--vertical-padding));
+  padding: var(--vertical-padding) calc(var(--horizontal-padding) - 10px) var(--vertical-padding) var(--horizontal-padding);
+  background-color: var(--mantine-color-body-secondary);
+  border-bottom: 1px solid var(--mantine-color-default-border);
   z-index: 10;
   gap: var(--horizontal-padding);
 }
@@ -22,11 +21,14 @@
 }
 
 .closeButton {
-  background-color: var(--mantine-color-gray-light);
+  background-color: transparent;
+  color: var(--mantine-color-dimmed);
+  margin-left: -12px;
 }
 
 .closeButton:hover {
-  background-color: var(--mantine-color-gray-light-hover);
+  background-color: transparent;
+  color: var(--mantine-color-text);
 }
 
 @media (min-width: 800px) {
